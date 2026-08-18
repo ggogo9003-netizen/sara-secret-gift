@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#07020d">
+<title>مستقرّ القلوب • mohamed & sara ✨</title>
+
+<style>
+*{
+ box-sizing:border-box;
+ -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+ margin:0;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ background:#06010a;
+ color:#fff;
+ font-family:Arial, Tahoma, sans-serif;
+}
+
+body{
+ touch-action:manipulation;
+}
+
+#app{
+ position:relative;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ background:
+ radial-gradient(circle at 50% 30%, #3e0943 0, transparent 50%),
+ radial-gradient(circle at 15% 85%, #22073e 0, transparent 45%),
+ linear-gradient(180deg, #06010a, #13041f 60%, #040008);
+}
+
+canvas{
+ position:absolute;
+ inset:0;
+ width:100%;
+ height:100%;
+ pointer-events:none;
+}
+
+#bgCanvas{z-index:1}
+#fxCanvas{z-index:3}
+
+.top-bar{
+ position:absolute;
+ z-index:50;
+ top:16px;
+ left:50%;
+ transform:translateX(-50%);
+ width:min(88vw, 540px);
+ height:4px;
+ border-radius:10px;
+ background:rgba(255,255,255,0.08);
+ overflow:hidden;
+}
+
+.top-bar span{
+ display:block;
+ height:100%;
+ width:0%;
+ background:linear-gradient(90deg, #ff79c6, #ff922b, #bd93f9);
+ box-shadow:0 0 14px #ff79c6;
+ transition:width 0.5s ease;
+}
+
+.screen{
+ position:absolute;
+ inset:0;
+ z-index:10;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:22px;
+ text-align:center;
+ opacity:0;
+ pointer-events:none;
+ transform:scale(1.04);
+ transition:opacity .65s ease, transform .65s ease;
+}
+
+.screen.active{
+ opacity:1;
+ pointer-events:auto;
+ transform:scale(1);
+}
+
+.card{
+ width:min(92vw, 620px);
+ max-height:86vh;
+ overflow-y:auto;
+ padding:28px 18px;
+ border-radius:30px;
+ background:rgba(255, 255, 255, 0.04);
+ border:1px solid rgba(255, 184, 222, 0.15);
+ box-shadow:
+  0 25px 80px rgba(0,0,0,0.75),
+  inset 0 0 35px rgba(255, 121, 198, 0.06);
+ backdrop-filter:blur(20px);
+}
+
+.card::-webkit-scrollbar{ display:none; }
+
+.title-poem{
+ font-size:clamp(26px, 6.5vw, 46px);
+ font-weight:900;
+ margin-bottom:12px;
+ background:linear-gradient(135deg, #ffffff, #ff79c6, #ffb86c, #e0aaff);
+ -webkit-background-clip:text;
+ background-clip:text;
+ color:transparent;
+ text-shadow:0 0 25px rgba(255, 121, 198, 0.4);
+}
+
+h2{
+ font-size:clamp(18px, 4.5vw, 26px);
+ margin:8px 0 14px;
+ color:#f8fafc;
+ font-weight:700;
+}
+
+p{
+ color:#f1f5f9;
+ line-height:1.8;
+ font-size:clamp(14px, 3.6vw, 16.5px);
+ margin:8px 0;
+ font-weight:300;
+}
+
+.highlight{
+ color:#ff94d0;
+ font-weight:bold;
+}
+
+button{
+ border:0;
+ color:#fff;
+ font-weight:700;
+ font-size:14px;
+ padding:12px 20px;
+ margin:6px;
+ min-width:125px;
+ border-radius:999px;
+ background:linear-gradient(135deg, #e84393, #8e44ad);
+ box-shadow:0 8px 24px rgba(232, 67, 147, 0.35);
+ cursor:pointer;
+ transition:transform .2s, box-shadow .2s;
+}
+
+button:active{ transform:scale(0.93); }
+
+.dark-btn{
+ background:rgba(255, 255, 255, 0.08);
+ border:1px solid rgba(255, 255, 255, 0.16);
+ box-shadow:none;
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2, 1fr);
+ gap:10px;
+ margin:18px auto;
+ max-width:460px;
+}
+
+.grid button{
+ min-height:80px;
+ margin:0;
+ font-size:13px;
+ line-height:1.5;
+ padding:10px;
+}
+
+.full-btn{
+ grid-column:1 / -1;
+ min-height:54px !important;
+ background:linear-gradient(135deg, #ff79c6, #d65db1) !important;
+ box-shadow:0 6px 20px rgba(255, 121, 198, 0.4) !important;
+ font-size:15px !important;
+ font-weight:bold !important;
+}
+
+.pass-input{
+ width:80%;
+ max-width:280px;
+ padding:14px 20px;
+ border-radius:999px;
+ border:1px solid rgba(255, 121, 198, 0.4);
+ background:rgba(255, 255, 255, 0.08);
+ color:#fff;
+ text-align:center;
+ font-size:16px;
+ outline:none;
+ margin:15px 0;
+ box-shadow:inset 0 0 10px rgba(0,0,0,0.5);
+ transition:border-color .3s;
+}
+
+.pass-input:focus{
+ border-color:#ff79c6;
+ background:rgba(255, 255, 255, 0.12);
+}
+
+#escapeArea{
+ position:relative;
+ height:180px;
+ max-width:480px;
+ margin:16px auto;
+ border:1px dashed rgba(255,255,255,0.12);
+ border-radius:22px;
+ background:rgba(255, 255, 255, 0.015);
+ overflow:hidden;
+}
+
+#noBtn{
+ position:absolute;
+ left:50%;
+ top:50%;
+ transform:translate(-50%, -50%);
+ margin:0;
+}
+
+.hidden{ display:none !important; }
+
+.shake{ animation:shake .35s; }
+@keyframes shake{
+ 25%{ transform:translateX(-7px); }
+ 75%{ transform:translateX(7px); }
+}
+
+#toast{
+ position:absolute;
+ z-index:100;
+ bottom:30px;
+ left:50%;
+ transform:translate(-50%, 20px);
+ opacity:0;
+ padding:11px 22px;
+ border-radius:999px;
+ background:rgba(25, 10, 35, 0.95);
+ border:1px solid rgba(255, 121, 198, 0.4);
+ font-size:14px;
+ transition:.35s ease;
+ pointer-events:none;
+ white-space:nowrap;
+ box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+
+#toast.show{
+ opacity:1;
+ transform:translate(-50%, 0);
+}
+
+.memory-icon{
+ font-size:46px;
+ margin:12px 0;
+ filter:drop-shadow(0 0 16px rgba(255, 121, 198, 0.45));
+ animation:float 3.2s ease-in-out infinite;
+}
+
+@keyframes float{
+ 50%{ transform:translateY(-10px); }
+}
+
+#secretDot{
+ position:fixed;
+ z-index:60;
+ right:16px;
+ bottom:16px;
+ width:12px;
+ height:12px;
+ border-radius:50%;
+ background:rgba(255,255,255,0.04);
+ cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<canvas id="bgCanvas"></canvas>
+<canvas id="fxCanvas"></canvas>
+
+<div class="top-bar">
+ <span id="progressBar"></span>
+</div>
+
+<div id="toast"></div>
+<div id="secretDot"></div>
+
+<!-- شاشة كلمة السر -->
+<section class="screen active" id="s_pass">
+ <div class="card">
+  <div class="memory-icon">🗝️</div>
+  <h2>كلمة سر الدخول لداخل قلب mohamed</h2>
+  <p>أدخلي كلمة المرور السرية لتنفتِح أبواب الأثر والذكريات الدافئة ✨</p>
+  <input type="password" id="passInput" class="pass-input" placeholder="اكتبي كلمة السر هنا..." onkeypress="if(event.key==='Enter') checkPass()">
+  <br>
+  <button onclick="checkPass()">دخول 🔑</button>
+ </div>
+</section>
+
+<!-- شاشة البداية -->
+<section class="screen" id="s0">
+ <div>
+  <div class="memory-icon">💖</div>
+  <div class="title-poem">مستقرّ القلوب</div>
+  <p>
+   في الزوايا الدافئة من الروح، تنام أصدق مشاعر الشوق والحنين...<br>
+   رحلة هادئة بين عشر محطات تلامس الوجدان ✨
+  </p>
+  <button onclick="startJourney()">ابدأ رحلة الدفء 🕯️</button>
+ </div>
+</section>
+
+<!-- مرحلة 1 -->
+<section class="screen" id="s1">
+ <div class="card">
+  <h2>المرحلة الأولى: أول النبضات 💓</h2>
+  <p>لما يشتاق القلب لشخص عزيز... شو أكثر شيء بيمرّ بالبال وبيصنع الدفء؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'اختيار جميل، بس القصة أعمق من هيك... ❤️‍🩹')">🎙️<br>نبرة صوته المليانة حنان</button>
+   <button onclick="badChoice(this, 'الابتسامة حلوة، بس في أبعاد ثانية كمان... ❤️‍🩹')">✨<br>ابتسامته اللي بتنوّر عتمة الأيام</button>
+   <button onclick="badChoice(this, 'الأمان مهم، بس القصة بتجمع كل التفاصيل... ❤️‍🩹')">🛡️<br>إحساس الأمان المطلق بوجوده</button>
+   <button onclick="badChoice(this, 'طيبة القلب أساسية، بس الصورة أشمل... ❤️‍🩹')">🌸<br>طهر نيته وطيبة قلبه العميقة</button>
+   <button class="full-btn" onclick="goodNext(2)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 2 -->
+<section class="screen" id="s2">
+ <div class="card">
+  <h2>المرحلة الثانية: المأوى والوطن 🏡</h2>
+  <p>متى بتحسي إنك لقيتي <span class="highlight">الوطن الحقيقي</span> بعيداً عن ضوضاء العالم؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'الاستماع دافئ، بس العاطفة أوسع... ❤️‍🩹')">🤍<br>لما يلمس حزني ويسمعني بدون كلام</button>
+   <button onclick="badChoice(this, 'العفوية جميلة، بس المكان بيوسع الكل... ❤️‍🩹')">🌸<br>لما أكون على طبيعتي بدون تصنّع</button>
+   <button onclick="badChoice(this, 'الدعم قوي، بس العاطفة كليّة... ❤️‍🩹')">🤝<br>لما يحكيلي: (أنا معك للآخر ما تخافي)</button>
+   <button onclick="badChoice(this, 'نظرة العين بتسوى الكثير، بس المشاعر أعمق... ❤️‍🩹')">✨<br>لما ألمح الحنيّة بنظرة عيونه</button>
+   <button class="full-btn" onclick="goodNext(3)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 3 -->
+<section class="screen" id="s3">
+ <div class="card">
+  <h2>المرحلة الثالثة: تفاصيل الحنان ☕</h2>
+  <p>شو ألطف أثر ممكن يتركه الشخص بقلبك ويضل يعيش معك؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'الكلام الطيب حلو، بس الدفء بيشمل الكل... ❤️‍🩹')">كلمة حلوة حكاها بوقت كنت محتاجيتها 🕊️</button>
+   <button onclick="badChoice(this, 'الدعوات الصادقة نقية، بس في تفاصيل ثانية... ❤️‍🩹')">دعوة صادقة بظهر الغيب تحميك 🕯️</button>
+   <button onclick="badChoice(this, 'العادات اللطيفة بتعيش، بس الأثر أكبر... ❤️‍🩹')">عادة لطيفة أخذتيها منه وصارت تشبهك ✨</button>
+   <button onclick="badChoice(this, 'الضحكات بلسم، بس الصورة كاملة أحلى... ❤️‍🩹')">ضحكة مشتركة طلعت من أعمق مكان بالقلب ☕</button>
+   <button class="full-btn" onclick="goodNext(4)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 4 -->
+<section class="screen" id="s4">
+ <div class="card">
+  <h2>المرحلة الرابعة: شفرة المحبة 🔐</h2>
+  <p>شو الأشياء اللي بتصنع <span class="highlight">الرابط القوي</span> بين روحين تحابان بصدق؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'الاحترام أساس، بس الرابط بيشمل الباقي... ❤️‍🩹')">الاحترام المتبادل في كل الأوقات 🤝</button>
+   <button onclick="badChoice(this, 'التغاضي مهم، بس القلب بيحتوي الكل... ❤️‍🩹')">التغاضي عن الزلات والتماس العذر 🤍</button>
+   <button onclick="badChoice(this, 'المشاركة دافئة، بس العاطفة أشمل... ❤️‍🩹')">مشاركة التفاصيل الصغيرة واليومية 🌙</button>
+   <button onclick="badChoice(this, 'الثقة أمان، بس الرابط بيجمعهم كلهم... ❤️‍🩹')">الثقة المتبادلة اللي ما بتهزها المسافات 📖</button>
+   <button class="full-btn" onclick="goodNext(5)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 5 -->
+<section class="screen" id="s5">
+ <div class="card">
+  <h2>المرحلة الخامسة: لغة العيون 👁️✨</h2>
+  <p>لو العيون حكت وباحَت بكل أسرار الشوق... شو أصدق اعتراف بتوصله النظرات؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'الاستثناء رائع، بس العيون بتحكي كل شيء... ❤️‍🩹')">💖<br>"أنت الاستثناء الوحيد بين هذا العالم"</button>
+   <button onclick="badChoice(this, 'الترميم دافئ، بس المشاعر أكبر... ❤️‍🩹')">✨<br>"وجودك بيجبر كل كسر جواه قلبي"</button>
+   <button onclick="badChoice(this, 'الاطمئنان غالي، بس النظرات بتجمع الشوق... ❤️‍🩹')">🕊️<br>"معك بس بحسّ إني وصلت لبر الأمان"</button>
+   <button onclick="badChoice(this, 'الاهتمام حلو، بس الاعتراف الكامل أحلى... ❤️‍🩹')">🌸<br>"كل تفاصيـلك تعنـيلي أكثر مما تتخيلي"</button>
+   <button class="full-btn" onclick="goodNext(6)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 6 -->
+<section class="screen" id="s6">
+ <div class="card">
+  <h2>المرحلة السادسة: ملمس الشغف 🕊️</h2>
+  <p>شو الشعور اللي لو امتلكتيه مع حبيبك بتنسي كل أوجاع الدنيا؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'الاحتواء جميل، بس الشعور العميق بضمهم كلهم... ❤️‍🩹')">الاحتواء الكامل بدون أسباب ولا شروط 🕊️</button>
+   <button onclick="badChoice(this, 'الطمأنينة سكن، بس المشاعر شاسعة... ❤️‍🩹')">إحساس الطمأنينة إنه ما رح يتغير عليك ✨</button>
+   <button onclick="badChoice(this, 'الفهم الهادئ راحة، بس الدفء بيشمل الكل... ❤️‍🩹')">إنه فاهمك من نظرة بدون ما تشرحي كلمة 🤍</button>
+   <button onclick="badChoice(this, 'القبول أمان، بس القصة مكتملة بكل الخيارات... ❤️‍🩹')">قبوله لك بكل حالاتك وتقلباتك 🌸</button>
+   <button class="full-btn" onclick="goodNext(7)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 7 -->
+<section class="screen" id="s7">
+ <div class="card">
+  <h2>المرحلة السابعة: تجميد اللحظة ⏳</h2>
+  <p>لو أُعطيتي فرصة توقفي الزمن وتعيشي لحظة عاطفية واحدة للأبد... شو بتختاري؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'الجلسة تحت النجوم ساحرة، بس اللحظات كلها غالية... ❤️‍🩹')">جلسة هادئة تحت النجوم بكلام من القلب ☕</button>
+   <button onclick="badChoice(this, 'العناق دافئ، بس المشاعر بتجمع الكل... ❤️‍🩹')">لحظة عناق دافئ يمسح كل تعب الأيام 🫂</button>
+   <button onclick="badChoice(this, 'الضحك شفاء، بس الأمنية بتوسع كل اللحظات... ❤️‍🩹')">ضحكة طالعة من القلب بدون أي همّ 🌸</button>
+   <button onclick="badChoice(this, 'الصمت الفصيح عميق، بس الذكريات مكتملة... ❤️‍🩹')">لحظة صمت فيها ألف عين تتكلم ✨</button>
+   <button class="full-btn" onclick="goodNext(8)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 8 -->
+<section class="screen" id="s8">
+ <div class="card">
+  <h2>المرحلة الثامنة: عهد الوفاء 💍</h2>
+  <p>شو أصدق وعد عاطفي ممكن ينعطى بين روحين تحابان بصدق؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'السند غالي، بس الوعد الصادق بيشمل الكل... ❤️‍🩹')">"أكون إلك سند وأمان بالمُرّ قبل الحلو" 🛡️</button>
+   <button onclick="badChoice(this, 'المحبة بالتقلبات حنونة، بس العهد أوسع... ❤️‍🩹')">"أحبك بتقلباتك وحزنك قبل فرحك" 🤍</button>
+   <button onclick="badChoice(this, 'صون الود شرف، بس المشاعر متكاملة... ❤️‍🩹')">"أصون ودّك بالغياب قبل الحضور" 🕊️</button>
+   <button onclick="badChoice(this, 'الدعاء طهر، بس الوعد بيجمع كل هالدفء... ❤️‍🩹')">"يضل اسمك أوّل دعواتي في كل صلاة" 🕯️</button>
+   <button class="full-btn" onclick="goodNext(9)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 9 -->
+<section class="screen" id="s9">
+ <div class="card">
+  <h2>المرحلة التاسعة: نداء القلوب 🌠</h2>
+  <p>شو أصدق الدعوات والأمنيات اللي ممكن تُهدى للروح في سماء الغد؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'أن يظل البال هادئاً وخالياً من الخوف 🕊️')">هدوء البال والسكينة الدائمة 🕊️</button>
+   <button onclick="badChoice(this, 'أن تسلم الروح من كل أذى وضيق 🌸')">الحماية والحفظ من كل سوء 🌸</button>
+   <button onclick="badChoice(this, 'أن يدوم القرب والدفء ولا ينقطع ✨')">دوام المحبة والطمأنينة بيننا ✨</button>
+   <button onclick="badChoice(this, 'أن تُفتح الأبواب بالخير واليسر 🌟')">التوفيق الدائم والبركة في الخطوات 🌟</button>
+   <button class="full-btn" onclick="goodNext(10)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- مرحلة 10 -->
+<section class="screen" id="s10">
+ <div class="card">
+  <h2>المرحلة العاشرة: أثر لا ينطفئ 🕯️</h2>
+  <p>قبل ما تنطوي صفحات هذه الرحلة العاطفية... شو العبارة اللي بتلخص كل هذا الأثر؟</p>
+  <div class="grid">
+   <button onclick="badChoice(this, 'عبارة دافئة، بس المعنى الكلي أجمل... ❤️‍🩹')">"أنتِ أجمل نِعمة زُيِّنت بها أيامي" ✨</button>
+   <button onclick="badChoice(this, 'الأثر الطيب يعيش، بس الحقيقة تجمعهم كلهم... ❤️‍🩹')">"وجودك أمان، وأثرك عطر بالروح" 🌸</button>
+   <button onclick="badChoice(this, 'الدوام أمنية غالية، بس المشاعر أشمل... ❤️‍🩹')">"دمتِ لي شيئاً جميلاً لا ينتهي" 💖</button>
+   <button onclick="badChoice(this, 'حفظ الله الأرواح الدافئة دائماً... ❤️‍🩹')">"ربي لا يحرمني من وجودك البهيّ" 🤲</button>
+   <button class="full-btn" onclick="goodNext(11)">جميع ما ذكر ❤️‍🩹</button>
+  </div>
+ </div>
+</section>
+
+<!-- محطة التلويح (الزر الهارب) -->
+<section class="screen" id="s11">
+ <div class="card">
+  <h2>محطة التلويح 🕊️</h2>
+  <p>قبل ما نختم هذا الألبوم ونحفظ هذه المشاعر الدافئة بالقلب...</p>
+  
+  <div id="escapeArea">
+   <button id="noBtn" class="dark-btn" onclick="escapeClick()">مهلاً... لنُعد الصفحة 🕯️</button>
+  </div>
+  
+  <button id="yesBtn" class="hidden" onclick="goodNext(12)">نمضي بأمل وودّ دائم ✨</button>
+  <p id="escapeMsg" style="min-height:24px; color:#ff79c6; font-weight:bold; font-size:14px;"></p>
+ </div>
+</section>
+
+<!-- النهاية الشاعرية والدعاء المبارك -->
+<section class="screen" id="s12">
+ <div class="card">
+  <div class="title-poem">إلى لقاءٍ أجمَل ✨</div>
+  <h2>وليس وداعاً...</h2>
+  <p>
+   ما كان صادقاً لا يمحوه الغياب، وما ترك أثراً طيّباً يظلّ مشعاً مهما ابتعدت الطرق.
+  </p>
+
+  <!-- دعاء بالصحة والسلامة والعافية -->
+  <div style="margin:22px 0; padding:18px; border-radius:20px; background:rgba(255, 121, 198, 0.08); border:1px solid rgba(255, 184, 222, 0.25);">
+   <p style="color:#ffb86c; font-size:17px; font-weight:bold; margin-bottom:8px;">🤲 دعاءٌ من القلب بالصحة والعافية 🤲</p>
+   <p style="color:#ffffff; font-size:15px; line-height:1.9;">
+    "اللهم أحاطها بعينك التي لا تنام، وأسبغ عليها ثوب **الصحة والعافية والسلامة**، واجعل أيّامها القادمة محفوفة بالراحة والأمان، ولا تُقلق لها بالاً، وادفأ قلبها برعايتك ولطفك في كل خطوة ومكان ❤️"
+   </p>
+  </div>
+
+  <p style="color:#ff94d0; font-size:17px; font-weight:bold; margin-top:15px; line-height:1.7;">
+   دمتِ بحفظ الله، ولتكن خطواتك القادمة خفيفة، نضرة، ومحفوفة بكل التوفيق والخير ❤️
+  </p>
+  <button onclick="location.reload()">تصفّح مجدداً 🔄</button>
+ </div>
+</section>
+
+<!-- السر المخفي -->
+<section class="screen" id="s13">
+ <div class="card">
+  <div class="title-poem">هَمْسَة سِرِّيّة 🔐</div>
+  <h2>الجمال لا يضيع ✨</h2>
+  <p style="font-size:18px; color:#ff79c6;">
+   وصلت للنقطة الخفية... لأنك تبحثين عن التفاصيل دائماً.
+  </p>
+  <p>شكراً لأنكِ كنتِ جزءاً لطيفاً وجميلاً من هذه الرحلة. أتمنى لكِ أيّاماً تُشبه طيبة قلبك 🌸</p>
+  <button onclick="location.reload()">العودة للبداية 🔄</button>
+ </div>
+</section>
+
+</div>
+
+<script>
+let ac = null;
+let currentScreen = 'pass';
+let escapeCount = 0;
+let secretClicks = 0;
+
+const $ = id => document.getElementById(id);
+
+/* PASSWORD CHECK LOGIC */
+function checkPass() {
+ const input = $('passInput').value.trim().toLowerCase();
+ if (input === "sara") {
+  initAudio();
+  sndGood();
+  toast("أهلاً بكِ في قلب mohamed ❤️");
+  addFx(innerWidth / 2, innerHeight / 2, 40);
+  setTimeout(() => goTo(0), 600);
+ } else {
+  sndBad();
+  $('passInput').classList.remove('shake');
+  void $('passInput').offsetWidth;
+  $('passInput').classList.add('shake');
+  toast("كلمة المرور غير صحيحة... حاولي مجدداً 🗝️");
+ }
+}
+
+/* AUDIO SYNTHESIZER */
+function initAudio() {
+ if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+ if (ac.state === "suspended") ac.resume();
+}
+
+function playTone(freq = 440, duration = 0.35, type = "sine", vol = 0.04, delay = 0) {
+ if (!ac) return;
+ setTimeout(() => {
+  let osc = ac.createOscillator();
+  let gain = ac.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.0001, ac.currentTime);
+  gain.gain.exponentialRampToValueAtTime(vol, ac.currentTime + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start();
+  osc.stop(ac.currentTime + duration + 0.04);
+ }, delay);
+}
+
+function sndGood() {
+ playTone(523.25, 0.35, "sine", 0.045); // C5
+ playTone(659.25, 0.4, "sine", 0.04, 100); // E5
+ playTone(783.99, 0.5, "sine", 0.035, 200); // G5
+}
+
+function sndBad() {
+ playTone(220, 0.2, "triangle", 0.025);
+ playTone(196, 0.25, "triangle", 0.02, 90);
+}
+
+/* BACKGROUND FLOATING PARTICLES */
+const bgCanvas = $('bgCanvas');
+const fxCanvas = $('fxCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+const fxCtx = fxCanvas.getContext('2d');
+
+let particles = [];
+let fxParts = [];
+
+function resizeCanvas() {
+ bgCanvas.width = fxCanvas.width = innerWidth * devicePixelRatio;
+ bgCanvas.height = fxCanvas.height = innerHeight * devicePixelRatio;
+ bgCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+ fxCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+for (let i = 0; i < 120; i++) {
+ particles.push({
+  x: Math.random() * innerWidth,
+  y: Math.random() * innerHeight,
+  r: 0.6 + Math.random() * 2.0,
+  speedY: 0.15 + Math.random() * 0.45,
+  alpha: Math.random(),
+  phase: Math.random() * Math.PI * 2
+ });
+}
+
+function renderBg() {
+ bgCtx.clearRect(0, 0, innerWidth, innerHeight);
+ let t = performance.now() * 0.001;
+ for (let p of particles) {
+  p.y -= p.speedY;
+  if (p.y < 0) p.y = innerHeight;
+  bgCtx.beginPath();
+  bgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+  let pulsingAlpha = 0.2 + 0.45 * (Math.sin(t * 1.3 + p.phase) + 1) / 2;
+  bgCtx.fillStyle = `rgba(255, 148, 208, ${pulsingAlpha})`;
+  bgCtx.fill();
+ }
+ requestAnimationFrame(renderBg);
+}
+renderBg();
+
+/* BURST PARTICLES */
+function addFx(x, y, count = 25) {
+ const colors = ["#ff79c6", "#ff922b", "#bd93f9", "#ffffff", "#ffb86c"];
+ for (let i = 0; i < count; i++) {
+  fxParts.push({
+   x: x, y: y,
+   vx: (Math.random() - 0.5) * 6,
+   vy: (Math.random() - 0.5) * 6,
+   life: 1,
+   color: colors[Math.floor(Math.random() * colors.length)]
+  });
+ }
+}
+
+function renderFx() {
+ fxCtx.clearRect(0, 0, innerWidth, innerHeight);
+ for (let i = fxParts.length - 1; i >= 0; i--) {
+  let p = fxParts[i];
+  p.x += p.vx; p.y += p.vy;
+  p.life -= 0.022;
+  if (p.life <= 0) { fxParts.splice(i, 1); continue; }
+  fxCtx.globalAlpha = p.life;
+  fxCtx.beginPath();
+  fxCtx.arc(p.x, p.y, 3.2 * p.life, 0, Math.PI * 2);
+  fxCtx.fillStyle = p.color;
+  fxCtx.fill();
+ }
+ requestAnimationFrame(renderFx);
+}
+renderFx();
+
+/* NAVIGATION & FLOW */
+function goTo(n) {
+ document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+ 
+ if (n === 'pass') {
+  $('s_pass').classList.add('active');
+  $('progressBar').style.width = '0%';
+ } else {
+  $('s' + n).classList.add('active');
+  currentScreen = n;
+  if (n >= 1 && n <= 10) {
+   $('progressBar').style.width = (n / 10 * 100) + '%';
+  } else if (n > 10) {
+   $('progressBar').style.width = '100%';
+  } else {
+   $('progressBar').style.width = '0%';
+  }
+ }
+ addFx(innerWidth / 2, innerHeight / 2, 18);
+}
+
+function startJourney() {
+ initAudio();
+ sndGood();
+ goTo(1);
+}
+
+function toast(msg) {
+ const t = $('toast');
+ t.textContent = msg;
+ t.classList.add('show');
+ clearTimeout(window.toastTimer);
+ window.toastTimer = setTimeout(() => t.classList.remove('show'), 2300);
+}
+
+function badChoice(btn, msg) {
+ sndBad();
+ btn.classList.remove('shake');
+ void btn.offsetWidth;
+ btn.classList.add('shake');
+ toast(msg);
+}
+
+function goodNext(n) {
+ sndGood();
+ addFx(innerWidth / 2, innerHeight / 2, 32);
+ toast("بالفعل... جميع ما ذكر صحيح ❤️‍🩹");
+ setTimeout(() => goTo(n), 500);
+}
+
+/* ESCAPE BUTTON LOGIC */
+function escapeClick() {
+ escapeCount++;
+ const area = $('escapeArea');
+ const btn = $('noBtn');
+ 
+ const maxX = area.clientWidth - btn.offsetWidth - 12;
+ const maxY = area.clientHeight - btn.offsetHeight - 12;
+ 
+ const newX = Math.max(10, Math.random() * maxX);
+ const newY = Math.max(10, Math.random() * maxY);
+ 
+ btn.style.left = newX + 'px';
+ btn.style.top = newY + 'px';
+ btn.style.transform = 'none';
+ 
+ sndBad();
+ addFx(area.getBoundingClientRect().left + newX, area.getBoundingClientRect().top + newY, 10);
+ 
+ if (escapeCount === 1) $('escapeMsg').textContent = "يبدو أن للذكريات دلالاً يمنع الرحيل السريع 🤍";
+ else if (escapeCount === 2) {
+  $('escapeMsg').textContent = "ظهر طريق الأمل فوراً ✨";
+  $('yesBtn').classList.remove('hidden');
+ }
+}
+
+/* SECRET EASTER EGG */
+$('secretDot').addEventListener('click', () => {
+ secretClicks++;
+ if (secretClicks >= 5) {
+  toast("👀 كشفت الهمسة السرية!");
+  sndGood();
+  addFx(innerWidth - 30, innerHeight - 30, 45);
+  setTimeout(() => goTo(13), 500);
+ }
+});
+
+document.addEventListener('pointerdown', e => {
+ if (e.target.closest('button')) addFx(e.clientX, e.clientY, 10);
+});
+</script>
+</body>
+</html>
